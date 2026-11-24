@@ -1,0 +1,50 @@
+name: Mobile build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - name: Build web assets
+        run: bun run build
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - uses: android-actions/setup-android@v4
+
+      # android/ is only committed once someone has customized the native
+      # project — a fresh scaffold doesn't have it yet, so generate it from
+      # capacitor.config.ts + the just-built dist/ instead of failing.
+      - name: Add Android platform (only if not already committed)
+        run: test -d android || bunx cap add android
+
+      - name: Sync web build into the native project
+        run: bunx cap sync android
+
+      - name: Build debug APK
+        working-directory: android
+        run: |
+          chmod +x ./gradlew
+          ./gradlew assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk

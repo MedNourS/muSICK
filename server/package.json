@@ -1,0 +1,33 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "imports": {
+    "#config/*": "./src/config/*.ts"
+  },
+  "scripts": {
+    "dev": "bun run --watch index.ts",
+    "start": "bun run index.ts",
+    "test": "bun test",
+    "add-route": "bunx create-backon add-route",
+    "add-method": "bunx create-backon add-method",
+    "remove-route": "bunx create-backon remove-route",
+    "list-routes": "bunx create-backon list-routes",
+    "doctor": "bunx create-backon doctor",
+    "project": "bunx create-backon project",
+    "server-config": "bunx create-backon server-config",
+    "docs": "bun run scripts/generate-docs.ts",
+    "generate-client": "bun run scripts/generate-client.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@mednours/backon": "latest",
+    "hono": "^4.6.14",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.7.2"
+  }
+}
